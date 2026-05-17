@@ -33,23 +33,20 @@ class HeartopiaPlayer(ctk.CTk):
         self.resizable(False, False)
         self.attributes("-topmost", True)
         
-        # Paleta Lúdica com Cores Vivas e Fortes
-        self.cor_fundo_app = "#9C88FF"   # Violeta Vibrante
-        self.cor_painel = "#FFFFFF"      # Branco Puro para destacar as cores
-        self.cor_texto = "#2F3640"       # Cinza Escuro quase preto
-        self.cor_destaque = "#E84393"    # Rosa Choque (Sliders e Switches)
+        self.cor_fundo_app = "#9C88FF"
+        self.cor_painel = "#FFFFFF"
+        self.cor_texto = "#2F3640"
+        self.cor_destaque = "#E84393"
         
         self.configure(fg_color=self.cor_fundo_app)
 
-        # --- ÍCONE COM ARQUIVO PNG (Adeus Pena!) ---
+
         try:
-            # Basta salvar qualquer png de nota musical como 'icone_musica.png' na mesma pasta
             img_icone = tk.PhotoImage(file="icone_musica.png")
             self.iconphoto(False, img_icone)
         except Exception:
-            pass # Se a imagem não for encontrada, o programa abre normalmente sem crashar
+            pass 
 
-        # Variáveis de controle
         self.arquivo_midi = None
         self.tocando = False
         self.nome_mapa_atual = "Completo (37 Teclas)"
@@ -60,11 +57,11 @@ class HeartopiaPlayer(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.ao_fechar)
         keyboard.add_hotkey('esc', self.parar_musica)
 
-        # --- Abas ---
+
         self.tabview = ctk.CTkTabview(self, width=420, height=420, corner_radius=20, 
                                       fg_color=self.cor_painel, 
                                       segmented_button_fg_color="#DCDDE1",
-                                      segmented_button_selected_color="#00A8FF", # Azul Céu Vivo
+                                      segmented_button_selected_color="#00A8FF",
                                       segmented_button_selected_hover_color="#0097E6")
         self.tabview.pack(padx=20, pady=15, fill="both", expand=True)
 
@@ -77,7 +74,6 @@ class HeartopiaPlayer(ctk.CTk):
         self.construir_aba_config()
 
     def construir_aba_musica(self):
-        # Botão Carregar (Azul Vivo)
         self.btn_carregar = ctk.CTkButton(self.aba_musica, text="📂 ESCOLHER MÚSICA", 
                                           command=self.carregar_midi, corner_radius=15,
                                           fg_color="#00A8FF", hover_color="#0097E6", 
@@ -87,24 +83,20 @@ class HeartopiaPlayer(ctk.CTk):
         self.lbl_arquivo = ctk.CTkLabel(self.aba_musica, text="Nenhuma música carregada...", text_color="#718093", font=("Arial", 12, "bold"))
         self.lbl_arquivo.pack(pady=5)
 
-        # Barra de Progresso (Rosa Choque)
         self.progress = ctk.CTkProgressBar(self.aba_musica, width=360, height=15, corner_radius=10, progress_color=self.cor_destaque, fg_color="#F5F6FA")
         self.progress.set(0)
         self.progress.pack(pady=20)
 
-        # Container Fixo para os Botões
         frame_botoes = ctk.CTkFrame(self.aba_musica, fg_color="transparent", width=380, height=120)
         frame_botoes.pack_propagate(False) 
         frame_botoes.pack(pady=5)
 
-        # Botão Tocar (Verde Limão Super Vivo)
         self.btn_tocar = ctk.CTkButton(frame_botoes, text="▶️ TOCAR AGORA", 
                                        command=self.iniciar_thread, state="disabled", corner_radius=20,
                                        fg_color="#4CD137", hover_color="#44BD32", text_color="black", text_color_disabled="black",
                                        font=("Arial", 16, "bold"), width=300, height=45)
         self.btn_tocar.pack(pady=8)
 
-        # Botão Parar (Vermelho Fogo)
         self.btn_parar = ctk.CTkButton(frame_botoes, text="⏹️ PARAR MÚSICA", 
                                        command=self.parar_musica, state="disabled", corner_radius=20,
                                        fg_color="#E84118", hover_color="#C23616", text_color="black", text_color_disabled="black",
@@ -115,7 +107,7 @@ class HeartopiaPlayer(ctk.CTk):
         self.lbl_status.pack(pady=5)
 
     def construir_aba_config(self):
-        # Instrumento
+        
         ctk.CTkLabel(self.aba_config, text="🎹 Instrumento:", text_color=self.cor_texto, font=("Arial", 13, "bold")).pack(pady=(15, 2))
         self.combo_inst = ctk.CTkOptionMenu(self.aba_config, values=list(MAPAS.keys()), 
                                             command=self.mudar_instrumento, corner_radius=10, 
@@ -123,21 +115,21 @@ class HeartopiaPlayer(ctk.CTk):
                                             text_color=self.cor_texto, width=240, font=("Arial", 12, "bold"))
         self.combo_inst.pack(pady=5)
 
-        # Canal
+        
         ctk.CTkLabel(self.aba_config, text="🎧 Filtrar Canal:", text_color=self.cor_texto, font=("Arial", 13, "bold")).pack(pady=(10, 2))
         self.combo_canal = ctk.CTkOptionMenu(self.aba_config, values=self.canais_disponiveis, 
                                              corner_radius=10, fg_color="#DCDDE1", button_color="#00A8FF", button_hover_color="#0097E6",
                                              text_color=self.cor_texto, width=240, font=("Arial", 12, "bold"))
         self.combo_canal.pack(pady=5)
 
-        # Switch (Rosa Choque)
+        
         self.usar_conversao = ctk.BooleanVar(value=True)
         self.switch_conv = ctk.CTkSwitch(self.aba_config, text="Converter notas mágicas", 
                                          variable=self.usar_conversao, progress_color=self.cor_destaque,
                                          text_color=self.cor_texto, font=("Arial", 13, "bold"))
         self.switch_conv.pack(pady=15)
 
-        # Transposição
+        
         self.lbl_transp = ctk.CTkLabel(self.aba_config, text="🎵 Ajuste de Tom: 0", text_color=self.cor_texto, font=("Arial", 13, "bold"))
         self.lbl_transp.pack()
         self.slider_transp = ctk.CTkSlider(self.aba_config, from_=-24, to=24, number_of_steps=48, 
@@ -145,7 +137,7 @@ class HeartopiaPlayer(ctk.CTk):
         self.slider_transp.set(0)
         self.slider_transp.pack(pady=5)
 
-        # Velocidade
+        
         self.lbl_vel = ctk.CTkLabel(self.aba_config, text="🐇 Velocidade: 1.0x", text_color=self.cor_texto, font=("Arial", 13, "bold"))
         self.lbl_vel.pack(pady=(10, 0))
         self.slider_vel = ctk.CTkSlider(self.aba_config, from_=0.5, to=2.0, number_of_steps=15, 
